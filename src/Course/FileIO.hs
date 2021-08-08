@@ -79,52 +79,52 @@ the contents of c
 
 -}
 
+sequenceWith :: (Applicative k) 
+  => (a -> k b) -> List a -> k (List b)
+sequenceWith f = sequence . (f <$>)
+
 -- Given the file name, and file contents, print them.
 -- Use @putStrLn@.
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
+printFile name contents = putStrLn ("============ " ++ name)
+  *> putStrLn contents
 
 -- Given a list of (file name and file contents), print each.
 -- Use @printFile@.
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =
-  error "todo: Course.FileIO#printFiles"
+-- printFiles = void . sequence . (<$>) (uncurry printFile)
+printFiles = void . sequenceWith (uncurry printFile)
 
 -- Given a file name, return (file name and file contents).
 -- Use @readFile@.
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+getFile name = readFile name >>= \contents -> pure (name, contents)
 
 -- Given a list of file names, return list of (file name and file contents).
 -- Use @getFile@.
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
-getFiles =
-  error "todo: Course.FileIO#getFiles"
+getFiles = sequenceWith getFile 
 
 -- Given a file name, read it and for each line in that file, read and print contents of each.
 -- Use @getFiles@, @lines@, and @printFiles@.
 run ::
   FilePath
   -> IO ()
-run =
-  error "todo: Course.FileIO#run"
+run name = getFile name >>= \(name, contents) -> printFiles ((\str -> (name, str)) <$> lines contents)
 
 -- /Tip:/ use @getArgs@ and @run@
 main ::
   IO ()
-main =
-  error "todo: Course.FileIO#main"
+main = getArgs >>= \(name:._) -> run name
 
 ----
 

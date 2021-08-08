@@ -15,8 +15,7 @@ runPredicate ::
   Predicate a
   -> a
   -> Bool
-runPredicate (Predicate f) =
-  f
+runPredicate (Predicate f) = f
 
 -- | A 'Comparison' looks at two things and says whether the first is
 -- smaller, equal to, or larger than the second. 'Ordering' is a
@@ -29,8 +28,7 @@ runComparison ::
   -> a
   -> a
   -> Ordering
-runComparison (Comparison f) =
-  f
+runComparison (Comparison f) = f
 
 -- | All this type does is swap the arguments around. We'll see why we
 -- want it when we look at its 'Contravariant' instance.
@@ -79,8 +77,7 @@ instance Contravariant Predicate where
     (b -> a)
     -> Predicate a
     -> Predicate b
-  (>$<) =
-    error "todo: Course.Contravariant (>$<)#instance Predicate"
+  f >$< p = Predicate (runPredicate p . f)
 
 -- | Use the function before comparing.
 --
@@ -91,8 +88,7 @@ instance Contravariant Comparison where
     (b -> a)
     -> Comparison a
     -> Comparison b
-  (>$<) =
-    error "todo: Course.Contravariant (>$<)#instance Comparison"
+  f >$< c = Comparison (\b b' -> runComparison c (f b) (f b'))
 
 -- | The kind of the argument to 'Contravariant' is @Type -> Type@, so
 -- our '(>$<)' only works on the final type argument. The
@@ -106,8 +102,7 @@ instance Contravariant (SwappedArrow t) where
     (b -> a)
     -> SwappedArrow x a
     -> SwappedArrow x b
-  (>$<) =
-    error "todo: Course.Contravariant (>$<)#instance SwappedArrow"
+  f >$< s = SwappedArrow (runSwappedArrow s . f)
 
 
 -- | If we give our 'Contravariant' an @a@, then we can "accept" any
@@ -119,5 +114,4 @@ instance Contravariant (SwappedArrow t) where
   a
   -> k a
   -> k b
-(>$) =
-  error "todo: Course.Contravariant#(>$)"
+a >$ k = const a >$< k
