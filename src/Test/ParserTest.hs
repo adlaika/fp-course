@@ -303,7 +303,7 @@ surnameParserTest =
     , testCase "parses shortest valid surname" $
         parse surnameParser "Abcdef" @?= Result "" "Abcdef"
     , testCase "parses long surname" $
-        parse surnameParser "Abcdefghijklmnopqrstuvwxyz" @?= Result "" "Abcdefghijklmnopqrstuvwxyz"
+        parse surnameParser "Abcdefghi" @?= Result "" "Abcdefghi"
   ]
 
 smokerParserTest :: TestTree
